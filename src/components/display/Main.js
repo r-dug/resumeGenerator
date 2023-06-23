@@ -15,7 +15,7 @@ const Main = () => {
     const [historyData, setHistoryData] = useState([])
     const [jobSummary, setJobSummary] = useState('')
     const [file, setFile] = useState()
-
+    const navigate = useNavigate();
     // a bunch of function expressions
 
     // this function doesn't really do anything but I wanted to possibly clean up and enhance file handling
@@ -42,13 +42,6 @@ const Main = () => {
     //     alert('Error uploading file');
     //   }
     // }
-
-    const navigate = useNavigate();
-
-    if (!UserContext){
-        navigate('/login');
-    }
-      console.log(UserContext)
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];

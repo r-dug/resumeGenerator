@@ -5,6 +5,7 @@ import Login from './context/Login';
 import RegistrationForm from './context/AccountCreation';
 import Main from './components/display/Main';
 import { UserProvider } from './context/Provider';
+import PrivateRoute from './PrivateRoute';
 import Navbar from './components/NavBar'
 import { useNavigate } from 'react-router-dom';
 
@@ -29,7 +30,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} /> 
         <Route path="/register" element={<RegistrationForm />} />
-        <Route path="/main"element={<Main />} />
+        <Route path="/main"element={<PrivateRoute><Main /></PrivateRoute>} />
       </Routes>
     </Router>
     </UserProvider>
