@@ -1,13 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,600;1,300;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Monoton&family=Oswald:wght@200;400;600;700&family=Roboto:wght@100;300;400;500;700;900&family=Rubik+Mono+One&display=swap');
+* {
+  color: #ffffff;
+  font-family: 'Roboto Mono',sans-sarif;
+    
+}
+button {
+  cursor: crosshair;
+  cursor: crosshair;
+  border:rgba(64, 64, 64, 0.5);
+  border-radius: 20px;
+  background: linear-gradient(270deg, rgba(1, 72, 87, 0.727)0%, rgba(2, 35, 141, 0.349)100%);
+  box-shadow: rgba(0,212,255,.15) 0 20px 20px,
+  rgba(0,212,255,.15) 0 -8px 18px,
+  rgba(0,212,255,.15) 0 2px 10px;
+  align-content: center;
+  text-align: center;
+}
+.topButtons{
+  align-items: start;
+}
+.bottomButtons{
+  align-items: end;
+}
+@keyframes change {
+  0% {
+    background-color: rgb(27, 59, 165);
+  }
+  25% {
+    background-color: rgb(0,0,0);
+  }
+  50% {
+    background-color: rgb(115, 250, 88);
+  }
+  75% {
+    background-color: rgb(255, 255, 255);
+  }
+  100% {
+    background-color: rgb(27, 59, 165);
+  }}
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: o;
+  background-image: url("paralax2.png"), url("transluscentgradient2.png");
+  background-attachment: fixed;
+  background-repeat: no-repeat, repeat;
+  background-size: cover; 
+  /* background-color: rgb(21, 0, 183); */
+  display: flex;
+  background-color: rgb(27, 59, 165);
+  animation: change 15s ease-out infinite;
+  }
+
+.app{
+  display: flex;
+}
+h1 {
+  font-family: 'Monoton';
+  font-size: 40px;
+  font-weight: 400;
+  padding: auto;
+}
+.side-bar {
+  background: rgba(64, 64, 64, 0.5);
+  
+  width: 17vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+}
+p {
+  border-radius: 20px;
+  box-shadow: rgba(0,212,255,.15) 0 20px 20px,
+  rgba(0,212,255,.15) 0 -8px 18px,
+  rgba(0,212,255,.15) 0 2px 10px;
+  background:  rgba(64, 64, 64, 0.5);
+}
+.history p {
+  padding: 5px;
+  margin: 5px;
+}
+.history li {
+  border: 2px;
+  border-style: solid;
+  list-style-type: none;
+  /* padding: 5 px 5px; */
+  margin: 5px;
+  cursor: crosshair;
+}
+#createresume {
+  background: rgba(64, 64, 64, 0.5);  
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+nav p {
+  border-top: solid o.5px rgba(255,255,255,1);
+  font-weight: 400;
+  text-align: center;
+  font-size: small;
+}
+.main {
+  display: flex;
+  vertical-align: 13%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+  width: 83vw;
+  overflow-y: auto;
+}
+
+.inputContainer {
+    text-align: center;
+    align-content: center;
+}
+.buttonArea {
+  text-align: center;
+  align-content: center;
+}
+label {
+    border-radius: 20px;
+    background: linear-gradient(270deg, rgba(0,212,255,.15)0%, rgb(0, 150, 255, .75)100%);
+    box-shadow: rgba(0,212,255,.15) 0 20px 20px,
+    rgba(0,212,255,.15) 0 -8px 18px,
+    rgba(0,212,255,.15) 0 2px 10px;
+}
+input {
+  cursor: crosshair;
+  border:rgba(64, 64, 64, 0.5);
+  border-radius: 20px;
+  background: linear-gradient(270deg, rgba(0,212,255,.15)0%, rgb(255, 255, 255, .05)100%);
+  box-shadow: rgba(0,212,255,.15) 0 20px 20px,
+  rgba(0,212,255,.15) 0 -8px 18px,
+  rgba(0,212,255,.15) 0 2px 10px;
+  align-content: center;
+  text-align: center;
+}
+textarea{
+  cursor: crosshair;
+    border:rgba(64, 64, 64, 0.5);
+    border-radius: 20px;
+    background: linear-gradient(270deg, rgba(0,212,255,.15)0%, rgb(255, 255, 255, .05)100%);
+    box-shadow: rgba(0,212,255,.15) 0 20px 20px,
+    rgba(0,212,255,.15) 0 -8px 18px,
+    rgba(0,212,255,.15) 0 2px 10px;
+    align-content: center;
+    text-align: center;
+}
+input[type]::file-selector-button {
+    border-radius: 20px;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(180deg, rgba(9,9,121,.5) 0%, rgba(0,212,255,.20) 100%);
+}
+.info {
+  border:rgba(64, 64, 64, 0.5);
+    border-radius: 20px;
+    background: linear-gradient(270deg, rgba(1, 72, 87, 0.727)0%, rgba(2, 35, 141, 0.349)100%);
+    box-shadow: rgba(0,212,255,.15) 0 20px 20px,
+    rgba(0,212,255,.15) 0 -8px 18px,
+    rgba(0,212,255,.15) 0 2px 10px;
+    text-align: center;
+    align-content: center;
+    padding: 10px;
+    font-size: small;
+    font-weight: 300;
 }
