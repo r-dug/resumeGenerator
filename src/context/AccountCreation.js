@@ -87,7 +87,7 @@ const RegistrationForm = () => {
   };
 
   return (
-    <><div>
+    <div>
       {banner && <div className="topBanner">{banner}</div>}
     
     <form onSubmit={handleSubmit}>
@@ -121,7 +121,6 @@ const RegistrationForm = () => {
       <button type="submit">Register</button>
     </form>
     </div>
-    </>
   );
 }
 

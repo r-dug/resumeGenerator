@@ -2,29 +2,80 @@ const PORT = 8000
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const MongoClient = require('mongodb').MongoClient;
-const bodyParser = require('body-parser');
-const bcrypt = require('bcrypt');
-
-
-app.use(express.json())
-app.use(cors())
-// establish connection to DB
-MongoClient.connect("mongodb://127.0.0.1:27017", { useUnifiedTopology: true })
-  .then(client => {
-    console.log('Connected to Database');
-    const db = client.db('resGen');
-    const collection = db.collection('collection1');
-    // Use the collection...
+const MongoClient = require('mongodb').MongoClient
+const bodyParser = require('body-parser')
+const bcrypt = require('bcrypt')
+const { ObjectId } = require('mongodb')
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const httpServer = createServer();
+const io = new Server(httpServer, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"]
+    }
   })
-  .catch(error => console.error(error))
+httpServer.listen(8002)
+app.use(express.json())
+app.use(cors(
+    {
+        origin: 'http://localhost:3000',  // Update with your client's URL
+        methods: ['GET', 'POST'],
+        credentials: true  // If your client makes requests with credentials (e.g., cookies)
+      }
+))
 
 // MongoDB connection string
 const url = "mongodb://127.0.0.1:27017"
 const client = new MongoClient(url)
-let db
 
+// connection establish and log error or success
+client.connect(url, { useUnifiedTopology: true })
+    .then(client => {
+        console.log('Connected to Database');
+        const db = client.db('resGen');
+        const collection = db.collection('collection1');
+        // Use the collection...
+    })
+    .catch(error => console.error(error))
 
+// database variable declared empty globally
+let db = client.db('resGen')
+
+let users = {}
+
+// Set up socket connection
+io.on('connection', function (socket) {
+    console.log('A connection has been made');
+  
+    // Event listener for the 'login' event
+    socket.on('login', (userId) => {
+        console.log(`User ${userId} logged in`);
+        // users[userId] = socket; // Associate this socket with the user
+
+        // // Example code for watching changes in a MongoDB collection
+        // const userIdHex = new ObjectId(userId); // Convert userId to ObjectId
+        // // console.log(userIdHex)
+        // // Replace 'historyCollection' with your actual collection name
+        // const historyCollection = db.collection('history');
+        // // console.log(historyCollection)
+        // // Start listening to changes
+        // const changeStream = historyCollection.watch({ $match: { 'fullDocument.userId': userIdHex } });
+
+        // changeStream.on('change', (change) => {
+        //     console.log(`Detected change in ${userId}'s history:`, change);
+        //     // Emit the change to the client
+        //     socket.emit('historyChange', change);
+        //     });
+    
+        // Clean up the change stream when user disconnects
+        socket.on('logout', (userId) => {
+            console.log(`User ${userId} disconnected`);
+            changeStream.close();
+            delete users[userId]; // Remove this user's socket
+            });
+    });
+  });
 
 // Multer configuration for file validation. 
 // const upload = multer({
@@ -108,7 +159,7 @@ app.post('/registration', async (req, res) => {
     res.status(500).json({ message: 'Server error', error })
     }
 })
-
+ 
 app.post('/login', async (req, res) => {
     const db = client.db('resGen')
     const collection = db.collection('users') 
@@ -116,17 +167,13 @@ app.post('/login', async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
     const existingUser = await collection.findOne({ username: document.username })
     const correctPass = await bcrypt.compare(document.password, hashedPassword)
-    console.log(hashedPassword)
-    console.log(document)
     let userpass = await collection.findOne({ username: document.username })
-    console.log(userpass)
-    console.log(correctPass)
+    let userId = userpass._id.toString
     if (!existingUser) {
         return res.status(400).json({ message: 'Incorrect Uname' })
     } else if (!correctPass) {
         return res.status(400).json({ message: 'Incorrect Password' })
     } else {
-        console.log("logged in?")
         return res.status(200).json({message: "Login Successful", user: userpass._id})
     }
 })
@@ -135,6 +182,7 @@ app.post('/historyPost', async (req, res) => {
     const db = client.db('resGen')
     const document = req.body
     // document['"date"'] = new Date(document.date)
+    console.log("ID Here:", req.headers.id)
     const collection = db.collection('history')
 
     try {
@@ -146,12 +194,12 @@ app.post('/historyPost', async (req, res) => {
         res.status(500).json({ message: 'An error occurred' })
     }
 })
-
+// 6498f47069eb98ab30632b81 for anotheruser1
 app.get('/historyGet', async (req, res) => {
     const db = client.db('resGen');
     try {
         const collection = db.collection('history');
-        const data = await collection.find({}).toArray();
+        const data = await collection.find({userid: req.headers.id}).toArray();
         res.json(data);
     //   console.log(data)
     } catch (error) {
