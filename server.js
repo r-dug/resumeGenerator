@@ -26,10 +26,6 @@ const io = new Server(httpServer, {
 httpServer.listen(HTTP_PORT)
 app.use(express.json())
 app.use(cors(
-    {
-        methods: ['GET', 'POST'],
-        credentials: true  // If your client makes requests with credentials (e.g., cookies)
-      }
 ))
 app.use(
     session({
