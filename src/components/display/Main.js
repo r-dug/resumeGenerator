@@ -1,11 +1,9 @@
 import { useState, useEffect, useContext, React} from "react";
-// import RegistrationForm from  "./../Account_Creation/Account_Creation"
-// import { App } from "./../../App"
 import { UserContext } from "../../context/UserContext";
 import { useNavigate } from 'react-router-dom';
 
 const Main = () => {
-
+    // hooks
     const [resumeValue, setResumeValue] = useState('')
     const [jobValue, setJobValue] = useState('')
     const [optimizedResume, setOptimizedResume] = useState(null)
@@ -17,10 +15,39 @@ const Main = () => {
     const [ViewAssessment, setViewAssessment] = useState(null)
     const [view, setView] = useState('input')
     const [historyData, setHistoryData] = useState([])
-    
-    const [file, setFile] = useState()
-    const navigate = useNavigate()
     const { user, setUser } = useContext(UserContext)
+
+    useEffect(() => {
+        if (optimizedResume !== null && optimizedCover !== null && jobSummary !== null && assessment !== null) {
+            sendDataToServer();
+            setViewResume(optimizedResume);
+            setViewCover(optimizedCover);
+            setViewAssessment(assessment);
+            resetVals()
+            setView('resume');
+          alert("Your application docs are ready!")
+        }
+      }, [optimizedResume, optimizedCover, jobSummary, assessment]);
+      
+    useEffect(() => {
+        try{
+            const fetchHistory = async () => {
+                const response = await fetch("http://localhost:8000/historyGet", {
+                    method: 'GET',
+                    headers:{
+                        id: user
+                    }
+                });
+
+                const data = await response.json();
+                setHistoryData(data);
+                }
+        fetchHistory();
+        }catch (error) {
+        console.log(error)
+        alert("OH NO! we couldn't get the history from the server.")
+        }
+    }, [user]);
 
     
     // a bunch of function expressions
@@ -49,7 +76,6 @@ const Main = () => {
     //     alert('Error uploading file');
     //   }
     // }
-console.log(user)
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
@@ -80,7 +106,6 @@ console.log(user)
         \n Are there any skills or knowledge gaps the candidate should address? If so, do you have any recommendations for the applicant?
         \n*****\n${optimizedResume}\n*****\n\n%%%%%\n${jobValue}\n%%%%% `
         }else if (type === 'summary') {
-        // console.log("this is the job description: ", jobValue)
         prompt = `If the job description listed between two sets of five asterisks contains the company's name, output the company name.
         Otherwise, summarize the job description in exactly four words. 
         If you do not see a job description between the two sets of five asterisks, say 'Not a real job'. 
@@ -100,6 +125,7 @@ console.log(user)
             "Content-Type": "application/json"
         },
         }
+        console.log("error on fron before fetch", options)
         try{
         const response = await fetch("http://localhost:8000/completions", options)
         const data = await response.json()
@@ -115,13 +141,9 @@ console.log(user)
         for  (const val of values) {
             let prompt = await updatePrompts(val)
             let data = await Promise.allSettled([openAiReq(prompt, val)])
-            // console.log(data)
             let content = data[0].value.choices[0].message.content.toString().replace(/\n/g, "<br>")
-            // console.log(typeof(content))
             if(data.length > 0){
-                // console.log("data here:", data, val)
                 updateVals(content, val)
-                // console.log("resume", optimizedResume)
             } else {
                 console.error('Invalid data received', data);
             }
@@ -139,14 +161,15 @@ console.log(user)
         } else if (valueupdate === "jobFit") {
             setAssessment(data.replace(/\n/g, "<br>"));
         }
-        }
+    }
         
     const resetVals = () => {
         setOptimizedResume(null)
         setJobSummary(null)
         setOptimizedCover(null)
         setAssessment(null)
-        }
+    }
+
     const sendDataToServer = async () => {
         const document = {
         optimizedResume: optimizedResume,
@@ -156,7 +179,6 @@ console.log(user)
         date: new Date(),
         userid: user
         }
-        // console.log(document)
         try {
         const response = await fetch('http://127.0.0.1:8000/historyPost', {
             method: 'POST',
@@ -193,8 +215,11 @@ console.log(user)
             const fetchHistory = async () => {
                 const response = await fetch("http://localhost:8000/historyGet", {
                     method: 'GET',
-                    headers: {id: user}
+                    headers:{
+                        id: user
+                    }
                 });
+
                 const data = await response.json();
                 setHistoryData(data);
                 }
@@ -203,9 +228,8 @@ console.log(user)
         console.log(error)
         alert("OH NO! we couldn't get the history from the server.")
         }
-    }, []);
+    }, [user]);
 
-    // console.log(historyData)
     return (
         <div className="app">
         <section className="side-bar">
@@ -257,8 +281,8 @@ console.log(user)
                 <div className='navBarBottom'>
                 <button onClick={() => window.location.reload()}>Reload</button><br></br><br></br>
                 <button onClick={async () => {
-                    await Promise.allSettled([getCompletions()]);
                     setView('loading')
+                    await Promise.allSettled([getCompletions()])
                 }}>Generate Assistance on Application!</button>
                 </div>
             </div>
@@ -322,3 +346,16 @@ console.log(user)
 }
 
 export default Main;
+
+// GPT suggestions:
+// Performance improvements:
+
+//     Avoiding Multiple Render Triggers: The useEffect hook is used to trigger certain actions based on the values of optimizedResume, optimizedCover, jobSummary, and assessment. However, it's important to note that the useEffect hook is triggered on every render. To avoid unnecessary triggers, you can consider using separate state variables for each action or combining them into a single state object. This way, you can have more granular control over when each action should be triggered.
+
+//     Error Handling: The code could benefit from better error handling in certain parts, such as handling errors during API requests or displaying error messages to the user in case of failures. Consider implementing proper error handling and displaying user-friendly error messages when needed.
+
+//     Conditional Rendering: The code uses conditional rendering based on the view state variable. While this approach works, it can become difficult to manage when the application grows with more views and complex conditions. Consider using a router library (e.g., React Router) to manage routing and rendering different views based on the URL.
+
+//     File Handling: The code includes commented-out file handling code. If file handling functionality is required, you can uncomment the code and make necessary modifications. However, ensure that appropriate error handling and validation are implemented to handle different scenarios and provide meaningful feedback to the user.
+
+//     Code Cleanup: There are commented-out sections of code that are not being used. It's a good practice to remove such unused code to keep the codebase clean and maintainable.

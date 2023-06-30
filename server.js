@@ -1,5 +1,13 @@
-const PORT = 8000
+require('dotenv').config()
+const EXPRESS_PORT = process.env.EXPRESS_PORT
+const HTTP_PORT = process.env.HTTP_PORT
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+const SECRET = process.env.SECRET
+const CONNECTION_STRING = process.env.CONNECTION_STRING
+const FRONT_END = process.env.FRONT_END
+console.log(`key${OPENAI_API_KEY}\n${EXPRESS_PORT}\n${HTTP_PORT}\n${SECRET}`)
 const express = require('express')
+const session = require('express-session')
 const cors = require('cors')
 const app = express()
 const MongoClient = require('mongodb').MongoClient
@@ -11,26 +19,36 @@ const { Server } = require("socket.io");
 const httpServer = createServer();
 const io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:3000",
-      methods: ["GET", "POST"]
+        credentials: true,
+        methods: ["GET", "POST"]
     }
   })
-httpServer.listen(8002)
+httpServer.listen(HTTP_PORT)
 app.use(express.json())
 app.use(cors(
     {
-        origin: 'http://localhost:3000',  // Update with your client's URL
         methods: ['GET', 'POST'],
         credentials: true  // If your client makes requests with credentials (e.g., cookies)
       }
 ))
+app.use(
+    session({
+      secret: SECRET, // Set a secret key for session signing (replace 'your-secret-key' with your own secret)
+      resave: false, // Disable session resaving on each request
+      saveUninitialized: false, // Do not save uninitialized sessions
+      cookie: {
+        secure: false, // Set to true if using HTTPS
+        httpOnly: true, // Prevent client-side JavaScript from accessing cookies
+        maxAge: 1800000, // Session expiration time (in milliseconds)
+      },
+    })
+  )
 
 // MongoDB connection string
-const url = "mongodb://127.0.0.1:27017"
-const client = new MongoClient(url)
+const client = new MongoClient("mongodb://mongo:27017")
 
 // connection establish and log error or success
-client.connect(url, { useUnifiedTopology: true })
+client.connect("mongodb://mongo:27017", { useUnifiedTopology: true })
     .then(client => {
         console.log('Connected to Database');
         const db = client.db('resGen');
@@ -43,6 +61,17 @@ client.connect(url, { useUnifiedTopology: true })
 let db = client.db('resGen')
 
 let users = {}
+// MIDDLEWARE function to protect certain endpoints
+const isAuthenticated = (req, res, next) => {
+
+    if (req.session.user) {
+      // User is authenticated, proceed to the next middleware or route handler
+      next();
+    } else {
+      // User is not authenticated, redirect to the login page or send an error response
+      res.redirect(`${FRONT_END}/login`);
+    }
+  };
 
 // Set up socket connection
 io.on('connection', function (socket) {
@@ -141,18 +170,14 @@ app.post('/registration', async (req, res) => {
         }
     // Hash the password before saving in the database
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
-
     const user = {
         // user_id: reversed and hashed username?
         username: req.body.username,
         password: hashedPassword,
         email: req.body.email
-
     }
     
     let result = await collection.insertOne(user);
-    console.log(result)
-
     res.status(201).json({ message: 'User created', userId: result.insertedId })
     } catch (error) {
     console.error(error)
@@ -161,6 +186,7 @@ app.post('/registration', async (req, res) => {
 })
  
 app.post('/login', async (req, res) => {
+    console.log("session:", req.session)
     const db = client.db('resGen')
     const collection = db.collection('users') 
     const document = req.body
@@ -168,7 +194,6 @@ app.post('/login', async (req, res) => {
     const existingUser = await collection.findOne({ username: document.username })
     const correctPass = await bcrypt.compare(document.password, hashedPassword)
     let userpass = await collection.findOne({ username: document.username })
-    let userId = userpass._id.toString
     if (!existingUser) {
         return res.status(400).json({ message: 'Incorrect Uname' })
     } else if (!correctPass) {
@@ -176,6 +201,7 @@ app.post('/login', async (req, res) => {
     } else {
         return res.status(200).json({message: "Login Successful", user: userpass._id})
     }
+    
 })
 
 app.post('/historyPost', async (req, res) => {
@@ -194,14 +220,12 @@ app.post('/historyPost', async (req, res) => {
         res.status(500).json({ message: 'An error occurred' })
     }
 })
-// 6498f47069eb98ab30632b81 for anotheruser1
 app.get('/historyGet', async (req, res) => {
     const db = client.db('resGen');
     try {
         const collection = db.collection('history');
         const data = await collection.find({userid: req.headers.id}).toArray();
         res.json(data);
-    //   console.log(data)
     } catch (error) {
         res.status(500).json({ error: error.toString() });
     }
@@ -212,7 +236,7 @@ app.post('/completions', async (req, res) => {
     const options = {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+            "Authorization": `Bearer ${OPENAI_API_KEY}`,
             "content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -220,18 +244,44 @@ app.post('/completions', async (req, res) => {
             messages: [{role:"system",content:"You are to respond to requests for polished resume's and cover letters, helping job seekers match these documents to job descriptions they also provide you."},{role: "user", content: req.body.prompt}],
             temperature: 0.1,
             max_tokens: 2000,
-            
         })
     }
+    console.log("error on server before fetch", options)
     try{
         options.body["stream"] = true
         const response = await fetch("https://api.openai.com/v1/chat/completions", options)
         const data = await response.json()
         res.send(data)
+        console.log(data)
     }catch(error){
         console.log(error)
         console.log(`these were your options: ${options}`)
     }
 })
 
-app.listen(PORT, () => console.log("Your server is listening on port: "+ PORT))
+app.listen(EXPRESS_PORT, () => console.log("Your server is listening on port: "+ EXPRESS_PORT))
+
+
+
+// GPT suggestions:
+// Readability: The code is readable and follows a consistent coding style with proper indentation and naming conventions. The use of separate sections for different functionality (e.g., server setup, routes, socket connection) improves code organization.
+
+// Performance improvements:
+
+//     Connection Handling: The socket.io connection is established inside the io.on('connection') event listener. It's important to note that the event listener is invoked for each new connection. To avoid creating multiple connections for each user, you should move the socket connection setup outside of the event listener to ensure a single connection is used.
+
+//     Database Connection: Currently, the database connection is established twice: once using client.connect and then again using client.db. You can remove the first client.connect call since the connection is already established when creating the MongoClient instance.
+
+//     Error Handling: Error handling in the route handlers could be improved. Instead of console logging the error and sending a generic error response, you can provide more specific error messages and appropriate HTTP status codes based on the error type.
+
+//     Environment Configuration: Instead of hardcoding the server URL (http://localhost:3000) and MongoDB connection details (mongodb://127.0.0.1:27017), consider using environment variables or configuration files to make these values configurable based on the deployment environment.
+
+//     Middleware Usage: The body-parser middleware is not required in Express 4.16+ as it is included by default. You can remove the line app.use(bodyParser.json()).
+
+//     File Upload: The code related to file upload using Multer is commented out. If file upload functionality is required, you can uncomment and configure it appropriately.
+
+//     Error Handling Middleware: It would be beneficial to add an error handling middleware to handle any uncaught errors and provide appropriate responses to the client.
+
+//     Security: Consider implementing security measures such as input validation, sanitization, and user authentication/authorization depending on your application's requirements.
+
+// These are general suggestions, and the actual performance improvements will depend on the specific requirements and performance bottlenecks of your application.

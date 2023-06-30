@@ -1,35 +1,34 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from './UserContext'
 import { useNavigate } from "react-router-dom"
-import io from 'socket.io-client';
+import io from 'socket.io-client'
+// we will want to create a config file to the actual socket connection url upon launch
+const socket = io('http://localhost:8002')
 
 const Login = () => {
-  const socket = io('http://localhost:8002');
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const { setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext)
   
-  const handleUsernameChange = (event) => setUsername(event.target.value);
-  const handlePasswordChange = (event) => setPassword(event.target.value);
+  const handleUsernameChange = (event) => setUsername(event.target.value)
+  const handlePasswordChange = (event) => setPassword(event.target.value)
   const loginAttempt = async (script, valueupdate) => {
     const options = {
     method: "POST",
     body: JSON.stringify({
         username: username,
         password: password
-
     }),
     headers:{
         "Content-Type": "application/json"
-    },
+    }
     }
     try{
     const response = await fetch("http://localhost:8000/login", options)
     const data = await response.json()
-    // console.log(data)
+    console.log(response)
     if (data.message === "Login Successful") {
-      // console.log(data)
       setUser(data.user)
       socket.emit('login', data.user)
       navigate('/main')
@@ -40,7 +39,7 @@ const Login = () => {
     }
 }
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     loginAttempt()
 
   }
