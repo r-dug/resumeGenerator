@@ -3,7 +3,7 @@ const EXPRESS_PORT = process.env.EXPRESS_PORT
 const HTTP_PORT = process.env.HTTP_PORT
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const SECRET = process.env.SECRET
-const CONNECTION_STRING = process.env.CONNECTION_STRING
+const CONNECTION_STRING = process.env.MONGODB_URI
 const FRONT_END = process.env.FRONT_END
 console.log(`key${OPENAI_API_KEY}\n${EXPRESS_PORT}\n${HTTP_PORT}\n${SECRET}`)
 const express = require('express')
@@ -41,10 +41,10 @@ app.use(cors(
 //   )
 
 // MongoDB connection string
-const client = new MongoClient("mongodb://mongo:27017")
+const client = new MongoClient('mongodb://127.0.0.1:27017')
 
 // connection establish and log error or success
-client.connect("mongodb://mongo:27017", { useUnifiedTopology: true })
+client.connect('mongodb://127.0.0.1:27017', { useUnifiedTopology: true })
     .then(client => {
         console.log('Connected to Database');
         const db = client.db('resGen');
