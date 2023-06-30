@@ -27,18 +27,18 @@ httpServer.listen(HTTP_PORT)
 app.use(express.json())
 app.use(cors(
 ))
-app.use(
-    session({
-      secret: SECRET, // Set a secret key for session signing (replace 'your-secret-key' with your own secret)
-      resave: false, // Disable session resaving on each request
-      saveUninitialized: false, // Do not save uninitialized sessions
-      cookie: {
-        secure: false, // Set to true if using HTTPS
-        httpOnly: true, // Prevent client-side JavaScript from accessing cookies
-        maxAge: 1800000, // Session expiration time (in milliseconds)
-      },
-    })
-  )
+// app.use(
+//     session({
+//       secret: SECRET, // Set a secret key for session signing (replace 'your-secret-key' with your own secret)
+//       resave: false, // Disable session resaving on each request
+//       saveUninitialized: false, // Do not save uninitialized sessions
+//       cookie: {
+//         secure: false, // Set to true if using HTTPS
+//         httpOnly: true, // Prevent client-side JavaScript from accessing cookies
+//         maxAge: 1800000, // Session expiration time (in milliseconds)
+//       },
+//     })
+//   )
 
 // MongoDB connection string
 const client = new MongoClient("mongodb://mongo:27017")
@@ -58,16 +58,16 @@ let db = client.db('resGen')
 
 let users = {}
 // MIDDLEWARE function to protect certain endpoints
-const isAuthenticated = (req, res, next) => {
+// const isAuthenticated = (req, res, next) => {
 
-    if (req.session.user) {
-      // User is authenticated, proceed to the next middleware or route handler
-      next();
-    } else {
-      // User is not authenticated, redirect to the login page or send an error response
-      res.redirect(`${FRONT_END}/login`);
-    }
-  };
+//     if (req.session.user) {
+//       // User is authenticated, proceed to the next middleware or route handler
+//       next();
+//     } else {
+//       // User is not authenticated, redirect to the login page or send an error response
+//       res.redirect(`${FRONT_END}/login`);
+//     }
+//   };
 
 // Set up socket connection
 io.on('connection', function (socket) {
