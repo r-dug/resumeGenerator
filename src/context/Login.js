@@ -3,9 +3,11 @@ import { UserContext } from './UserContext'
 import { useNavigate } from "react-router-dom"
 import io from 'socket.io-client'
 // we will want to create a config file to the actual socket connection url upon launch
-const socket = io('http://localhost:8002')
+
 
 const Login = () => {
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost';
+const socket = io(`${API_URL}:8002`)
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -25,7 +27,7 @@ const Login = () => {
     }
     }
     try{
-    const response = await fetch("http://localhost:8000/login", options)
+    const response = await fetch(`${API_URL}:8000/login`, options)
     const data = await response.json()
     console.log(response)
     if (data.message === "Login Successful") {

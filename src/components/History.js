@@ -2,14 +2,13 @@ import { useState } from "react"
 import setOptimizedResume from "./display/Resume"
 import setOptimizedCover from "./display/CoverLetter"
 import setAssessment from "./display/JobFit"
-
 const History = () => {
-
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost';
     const [historyData, setHistoryData] = useState([])
 
     useEffect(() => {
         const fetchHistory = async () => {
-          const response = await fetch("http://localhost:8000/historyGet");
+          const response = await fetch(`${API_URL}/historyGet`);
           const data = await response.json();
           setHistoryData(data);
         }

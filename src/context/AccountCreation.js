@@ -20,6 +20,7 @@ const schema = yup.object().shape({
   });
 
 const RegistrationForm = () => {
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost';
     const [formState, setFormState] = useState({
         email: '',
         username: '',
@@ -43,7 +44,7 @@ const RegistrationForm = () => {
           body: JSON.stringify(form),
       }
       try{
-          const response = await fetch("http://localhost:8000/registration", options)
+          const response = await fetch(`${API_URL}/registration`, options)
           const data = await response.json()
           console.log("data: ",data.message)
           if (data.message === "User already exists") {

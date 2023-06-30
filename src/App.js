@@ -8,9 +8,11 @@ import { UserProvider } from './context/Provider'
 import PrivateRoute from './PrivateRoute'
 import io from 'socket.io-client'
 // we will want to create a config file to the actual socket connection url upon launch
-const socket = io('http://localhost:8002')
+
 
 const App = () => {
+  const socket = io(`${API_URL}:8002`)
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost';
   const Navigation = () => {
     const { user, setUser } = useContext(UserContext)
     console.log(user)

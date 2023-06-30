@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext, React} from "react";
 import { UserContext } from "../../context/UserContext";
 import { useNavigate } from 'react-router-dom';
-
 const Main = () => {
     // hooks
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost';
     const [resumeValue, setResumeValue] = useState('')
     const [jobValue, setJobValue] = useState('')
     const [optimizedResume, setOptimizedResume] = useState(null)
@@ -32,7 +32,7 @@ const Main = () => {
     useEffect(() => {
         try{
             const fetchHistory = async () => {
-                const response = await fetch("http://localhost:8000/historyGet", {
+                const response = await fetch(`${API_URL}/historyGet`, {
                     method: 'GET',
                     headers:{
                         id: user
@@ -125,9 +125,8 @@ const Main = () => {
             "Content-Type": "application/json"
         },
         }
-        console.log("error on fron before fetch", options)
         try{
-        const response = await fetch("http://localhost:8000/completions", options)
+        const response = await fetch(`${API_URL}/completions`, options)
         const data = await response.json()
         return data
         } catch(error){
@@ -180,7 +179,7 @@ const Main = () => {
         userid: user
         }
         try {
-        const response = await fetch('http://127.0.0.1:8000/historyPost', {
+        const response = await fetch(`${API_URL}/historyPost`, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -213,7 +212,7 @@ const Main = () => {
     useEffect(() => {
         try{
             const fetchHistory = async () => {
-                const response = await fetch("http://localhost:8000/historyGet", {
+                const response = await fetch(`${API_URL}/historyGet`, {
                     method: 'GET',
                     headers:{
                         id: user

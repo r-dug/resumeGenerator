@@ -39,6 +39,7 @@
   },
   "scripts": {
     "heroku-postbuild": "npm run build",
+    "start": "serve -s build",
     "start:backend": "nodemon server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",

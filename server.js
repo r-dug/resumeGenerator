@@ -1,3 +1,4 @@
+require('dotenv').config()
 const EXPRESS_PORT = process.env.EXPRESS_PORT
 const HTTP_PORT = process.env.PORT || process.env.HTTP_PORT
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
