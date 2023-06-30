@@ -41,10 +41,10 @@ app.use(cors(
 //   )
 
 // MongoDB connection string
-const client = new MongoClient('mongodb://127.0.0.1:27017')
+const client = new MongoClient(CONNECTION_STRING)
 
 // connection establish and log error or success
-client.connect('mongodb://127.0.0.1:27017', { useUnifiedTopology: true })
+client.connect(CONNECTION_STRING, { useUnifiedTopology: true })
     .then(client => {
         console.log('Connected to Database');
         const db = client.db('resGen');
