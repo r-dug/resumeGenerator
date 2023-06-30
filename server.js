@@ -41,18 +41,28 @@ app.use(express.static(path.join(__dirname, 'src')))
 //   )
 
 // MongoDB connection string
-const client = new MongoClient(CONNECTION_STRING)
+const client = new MongoClient(CONNECTION_STRING, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      }
+})
 
 // connection establish and log error or success
-client.connect(CONNECTION_STRING, { useUnifiedTopology: true })
-    .then(client => {
-        console.log('Connected to Database');
-        const db = client.db('resGen');
-        const collection = db.collection('collection1');
-        // Use the collection...
-    })
-    .catch(error => console.error(error))
-
+async function run() {
+    try {
+      // Connect the client to the server	(optional starting in v4.7)
+      await client.connect();
+      // Send a ping to confirm a successful connection
+      await client.db("admin").command({ ping: 1 });
+      console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } finally {
+      // Ensures that the client will close when you finish/error
+      await client.close();
+    }
+  }
+  run().catch(console.dir);
 // database variable declared empty globally
 let db = client.db('resGen')
 
