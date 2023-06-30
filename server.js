@@ -6,6 +6,7 @@ const CONNECTION_STRING = process.env.MONGODB_URI
 const FRONT_END = process.env.FRONT_END
 console.log(`key${CONNECTION_STRING}\n${EXPRESS_PORT}\n${HTTP_PORT}\n${SECRET}`)
 const express = require('express')
+const path = require('path');
 const session = require('express-session')
 const cors = require('cors')
 const app = express()
