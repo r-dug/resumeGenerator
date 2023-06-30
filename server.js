@@ -1,5 +1,5 @@
 const EXPRESS_PORT = process.env.EXPRESS_PORT
-const HTTP_PORT = process.env.HTTP_PORT
+const HTTP_PORT = process.env.PORT || process.env.HTTP_PORT
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const SECRET = process.env.SECRET
 const CONNECTION_STRING = process.env.MONGODB_URI
@@ -26,9 +26,9 @@ const io = new Server(httpServer, {
 httpServer.listen(HTTP_PORT)
 app.use(express.json())
 app.use(cors())
-app.use(express.static(path.join(__dirname, 'src')))
+app.use(express.static(path.join(__dirname, 'build')))
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname+'/src/index.html'));
+    res.sendFile(path.join(__dirname+'/build/index.html'));
   });
 // app.use(
 //     session({
