@@ -27,6 +27,9 @@ httpServer.listen(HTTP_PORT)
 app.use(express.json())
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'src')))
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname+'/src/index.html'));
+  });
 // app.use(
 //     session({
 //       secret: SECRET, // Set a secret key for session signing (replace 'your-secret-key' with your own secret)

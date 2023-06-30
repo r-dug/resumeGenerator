@@ -38,7 +38,7 @@
     "yup": "^1.2.0"
   },
   "scripts": {
-    "start:frontend": "react-scripts start",
+    "heroku-postbuild": "react-scripts start",
     "start:backend": "nodemon server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
