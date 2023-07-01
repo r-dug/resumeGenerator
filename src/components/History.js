@@ -3,7 +3,7 @@ import setOptimizedResume from "./display/Resume"
 import setOptimizedCover from "./display/CoverLetter"
 import setAssessment from "./display/JobFit"
 const History = () => {
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost';
+    const API_URL = process.env.REACT_APP_API_URL || 'https://localhost';
     const [historyData, setHistoryData] = useState([])
 
     useEffect(() => {
