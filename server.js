@@ -28,10 +28,12 @@ httpServer.listen(HTTP_PORT)
 app.use(express.json())
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'build')))
+console.log(`Serving static files from ${path.join(__dirname, 'build')}`);
 app.get('*', (req, res) => {
-
-    res.sendFile(path.join(__dirname+'/index.js'));generator\src\App.js
-  })
+    const filePath = path.join(__dirname+'/build/index.html');
+    console.log(`Sending file: ${filePath}`);
+    res.sendFile(filePath);
+  });
 // app.use(
 //     session({
 //       secret: SECRET, // Set a secret key for session signing (replace 'your-secret-key' with your own secret)
@@ -62,9 +64,8 @@ async function run() {
       // Send a ping to confirm a successful connection
       await client.db("admin").command({ ping: 1 });
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
-      // Ensures that the client will close when you finish/error
-      await client.close();
+    }catch(error){
+        console.error(error)
     }
   }
   run().catch(console.dir);
@@ -201,10 +202,12 @@ app.post('/login', async (req, res) => {
     const db = client.db('resGen')
     const collection = db.collection('users') 
     const document = req.body
+    console.log(res.status)
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
     const existingUser = await collection.findOne({ username: document.username })
     const correctPass = await bcrypt.compare(document.password, hashedPassword)
     let userpass = await collection.findOne({ username: document.username })
+    console.log(existingUser)
     if (!existingUser) {
         return res.status(400).json({ message: 'Incorrect Uname' })
     } else if (!correctPass) {

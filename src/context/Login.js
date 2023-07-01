@@ -28,9 +28,10 @@ const Login = () => {
     }
     }
     try{
+      console.log(API_URL)
     const response = await fetch(`${API_URL}:8000/login`, options)
     const data = await response.json()
-    console.log(response)
+    console.log(data)
     if (data.message === "Login Successful") {
       setUser(data.user)
       socket.emit('login', data.user)
