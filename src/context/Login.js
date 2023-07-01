@@ -6,8 +6,9 @@ import io from 'socket.io-client'
 
 
 const Login = () => {
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost';
-const socket = io(`${API_URL}:8002`)
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost'
+  const SOCK_URL = process.env.REACT_APP_SOCK_URL || 'WSS://localhost'
+  const socket = io(`${SOCK_URL}:8002`)
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
