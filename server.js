@@ -24,16 +24,43 @@ const io = new Server(httpServer, {
         methods: ["GET", "POST"]
     }
   })
+  
 httpServer.listen(HTTP_PORT)
 app.use(express.json())
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'build')))
 console.log(`Serving static files from ${path.join(__dirname, 'build')}`);
+
+const fs = require('fs');
+
+function logDirectoryStructure(dirPath, prefix = '') {
+    const dir = fs.opendirSync(dirPath);
+  
+    let dirent;
+    while ((dirent = dir.readSync()) !== null) {
+      if (dirent.isDirectory()) {
+        const fullPath = path.join(dirPath, dirent.name);
+        if(dirent.name !== 'node_modules' && !prefix.includes('node_modules') && dirent.name !== '.git' && !prefix.includes('.git')) {
+          console.log(`${prefix}${fullPath}`);
+          logDirectoryStructure(fullPath, `${prefix}  `);
+        }
+      }
+    }
+    
+    dir.closeSync();
+  }
+  
+  logDirectoryStructure(path.resolve(__dirname));
+  
+  
+
+logDirectoryStructure(path.resolve(__dirname));
 app.get('*', (req, res) => {
     const filePath = path.join(__dirname+'/build/index.html');
     console.log(`Sending file: ${filePath}`);
     res.sendFile(filePath);
   });
+
 // app.use(
 //     session({
 //       secret: SECRET, // Set a secret key for session signing (replace 'your-secret-key' with your own secret)
