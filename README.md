@@ -1,3 +1,23 @@
+# Overview
+
+This is my first full stack web application. It's such a fun time. The basic idea is for users to create an account and login to access their account. It's a single page application, in which there is an input page where users can enter a text file of their resume, and the text of a job description. That input will be inserted into a prompt that will then be sent off to the OpenAI chat API endpoint. The prompt asks chatgpt to create a tailored resume and a cover letter for the application, and to make an assessment of whether or not the user is a good fit for the role described absed on the information in their resume, and to make suggestions for filling knowledge, skill or cerification gaps. The documents the AI generate are then stored in a database, in association with the user. Those history items then populate a history sidebar, from which individual items can be selected for later review- maybe the applicant gets an interview and would like to look back on the job application. I should also include an view for the actual job description but at the time of writing have not. 
+
+## on the docket
+
+This functionality is rudimentary and unimpressive. I'l give myself the credit of starting relatively close to ground level on this application, it being my first web application and all.... But it's probably not even really that useful to anyone, considering the output to the user is currently unformatted text- a shortcoming I intend on remediating. Also, the application itself is insecure.
+
+File handling: I feel almost embarrassed that the only capability thus far is .txt files and a text box. common files that people store resumes in would be more ideal - pdf, doc.
+
+Session management: currently, users are logged out on refresh. I am currently working on fixing this problem by implementing session cookies. 
+
+Accessability: layout and design, particularly the output as seen by users - as it's currently pretty ugly. I think what would be best would be to output a word doc formatted to a template to the user.
+
+Security:  Protections against injection, XSS, and a variety of other attacks should definitely be implemented. I would also like to implement a regex check on input data for sensitive information- phone numbers, email addresses, links - so I can replace it with placeholders instead of passing people's personal information to the openAI API.
+
+Future functionality: I think what would be much cooler than what I have going on is to use a variety of other APIs to render a digital "mock interviewer" avatar with which a user can get practice interviewing for any given job, using the job description and resume as context.
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
